@@ -34,6 +34,7 @@ def RegSpaceClustering(z, min_dist, max_centers=200, batch_size=100):
             print("%i centers: Exceeded the maximum number of cluster centers!\n"%len(centerids))
             print("Please increase dmin!\n")
             raise ValueError
+    print("Found %i centers!"%len(centerids))
     return center_list,centerids
 
 
