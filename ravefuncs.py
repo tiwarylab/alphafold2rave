@@ -32,7 +32,7 @@ def RegSpaceClustering(z, min_dist, max_centers=200, batch_size=100):
             # the first element will be used
             #print(center_list.shape,x_active.shape,x_active[indice[0]].shape)
             center_list = np.hstack((center_list, x_active[indice[0]].reshape(d,1)))
-            centerids.append(p[i+indice[0]])
+            centerids.append(p[i+indice[0]]+1)
             i += indice[0]
         else:
             i += batch_size
