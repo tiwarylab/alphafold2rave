@@ -30,7 +30,7 @@ def RegSpaceClustering(z, min_dist, max_centers=200, batch_size=100):
             i += indice[0]
         else:
             i += batch_size
-        if len(center_list) >= max_centers:
+        if len(centerids) >= max_centers:
             print("Exceed the maximum number of cluster centers!\n")
             print("Please increase dmin!\n")
             raise ValueError
