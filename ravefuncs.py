@@ -106,7 +106,7 @@ def make_biased_plumed(plumedfile,weights,colvar,height,biasfactor,width1,width2
 
     f.close()
     
-def run_biased(on_gpu,plumed_file,dt,temp,freq,nstep)
+def run_biased(on_gpu,plumed_file,dt,temp,freq,nstep):
   
     use_plumed=True
     outfreq = 0
