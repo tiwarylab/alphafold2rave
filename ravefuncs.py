@@ -157,9 +157,9 @@ def run_biased(on_gpu,plumed_file,dt,temp,freq,nstep):
     t2 = time.perf_counter()
     print('\ntime taken to run:',(t2-t1)/60,' mins')
 
+#Functions for CSP demo only
 
-def scinvert(sinx,cosx):
-  x=np.arcsin(sinx)
+def triginvert(x,sinx,cosx):
   if cosx<0:
     if sinx>0:
       x=np.pi-x
@@ -167,3 +167,16 @@ def scinvert(sinx,cosx):
       x=-np.pi-x
 
   return x
+
+def getTrp8(CVs):
+  sinx=CVs[:,12]
+  cosx=CVs[:,13]
+  x=np.arcsin(sinx)
+  chi1=triginvert(x,sinx,cosx)
+
+  sinx=CVs[:,116]
+  cosx=CVs[:,117]
+  x=np.arcsin(sinx)
+  chi2=[triginvert(a,b,c) for (a,b,c) in zip(x,sinx,cosx)]
+
+  return chi1,chi2
