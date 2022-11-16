@@ -4,5 +4,22 @@ AlphaFold2-RAVE: From sequence to Boltzmann ensemble
 Bodhi P. Vani, Akashnathan Aranganathan, Dedi Wang, Pratyush Tiwary
 bioRxiv 2022.05.25.493365; doi: https://doi.org/10.1101/2022.05.25.493365
 
+Dedi Wang and Pratyush Tiwary , "State predictive information bottleneck", J. Chem. Phys. 154, 134111 (2021) https://doi.org/10.1063/5.0038198
+
+If the provided code is used for the protocol, please also cite:
+
+** add references for: colabfold, OpenMM/conda-plumed, metadynamics
+
 This will be updated on peer reviewed acceptance
 
+Components
+
+This protocol is essentially a methodology that combines two schools of thought: structure prediction, and enhanced sampling to preserve thermodynamics. In this repository, we demonstrate one instance of such a methodology. For structure prediction, we use AlphaFold2, or more specifically ColabFold. We introduce stochasticity to the ColabFold algorithm by decreasing the MSA cluster size and generating structures with multiple random seeds*. For thermodynamics, we perform molecular dynamics simulations with metadynamics. To bias the simulations, we learn collective variables from the now-diverse set of structures using SPIB*.
+
+*The changes to the ColabFold algorithm, as well as the additional code required to use the SPIB for biasing have been provided in this github and their use is demonstrated in the colab files
+
+ravefuncs.py - functions required to run this instance of our methodology
+sample_config.ini - basic input configurations required for SPIB
+heavydemo.ipynb - our full protocol demonstrated to run on the colab GPU server to show improvement in sampling in a short time frame compared to unbiased simulation. This may take 2-4h to run.
+litedemo.ipynb - a tutorial of our protocol without running simulations, explaining how to build required code and files to adapt the methodology to your system and computational resources
+CSP_data - files required to run parts of heavydemo.ipynb and litedemo.ipynb on the benchmark system cold-shock protein 1HZB.
