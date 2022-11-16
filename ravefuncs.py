@@ -172,11 +172,11 @@ def getTrp8(CVs):
   sinx=CVs[:,12]
   cosx=CVs[:,13]
   x=np.arcsin(sinx)
-  chi1=triginvert(x,sinx,cosx)
+  chi1=  chi2=[triginvert(a,b,c) for (a,b,c) in zip(x,sinx,cosx)]
 
   sinx=CVs[:,116]
   cosx=CVs[:,117]
   x=np.arcsin(sinx)
   chi2=[triginvert(a,b,c) for (a,b,c) in zip(x,sinx,cosx)]
 
-  return chi1,chi2
+  return np.asarray(chi1),np.asarray(chi2)
