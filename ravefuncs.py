@@ -4,6 +4,12 @@
 @author: bvani
 """
 import numpy as np
+from sys import stdout
+from openmmplumed import PlumedForce
+from simtk.openmm.app import *
+from simtk.openmm import *
+from simtk.unit import *
+import pdbfixer
 
 def RegSpaceClustering(z, min_dist, max_centers=200, batch_size=100):
     '''Regular space clustering.
@@ -37,56 +43,82 @@ def RegSpaceClustering(z, min_dist, max_centers=200, batch_size=100):
     print("Found %i centers!"%len(centerids))
     return center_list,centerids
 
+def fix_pdb(index):
+  """
+  fixes the raw pdb from colabfold using pdbfixer.
+  This needs to be performed to cleanup the pdb and to start simulation 
+
+  Fixes performed: missing residues, missing atoms and missing Terminals
+  """
+  raw_pdb=f'pred_{index}.pdb';
+
+  # fixer instance
+  fixer = pdbfixer.PDBFixer(raw_pdb)
+
+  #finding and adding missing residues including terminals
+  fixer.findMissingResidues()
+  fixer.findMissingAtoms()
+  fixer.addMissingAtoms()
+  out_handle = open(f'fixed_{index}.pdb','w')
+  PDBFile.writeFile(fixer.topology, fixer.positions, out_handle,keepIds=True)
+
 
 def run_unbiased(on_gpu,plumedfile,dt,temp,freq,nstep,index):
-    use_plumed=True
-    outfreq = 0
-    chkpt_freq=0
-    
-    t1 = time.perf_counter()
+  """
+  Runs an unbiased simulation on the cluster center using openMM.
+  The MD engine also uses plumed for on the fly calculations
+  input : raw pdb from colabfold
+  forcefields : amber03 and tip3p
+  output : fixed_{index}.pdb, unb_{index}.pdb, COLVAR_unb
+  """
 
-    os.chdir("/content/test_MD/")
-    gro = GromacsGroFile('pred_%i.gro'%index)
-    top = GromacsTopFile('topol.top', \
-                         periodicBoxVectors=gro.getPeriodicBoxVectors(), \
-                         includeDir='/content/Plumed-on-OpenMM-GPU/gromacsff')
-    system = top.createSystem(nonbondedMethod=PME, nonbondedCutoff=1.2*nanometer, \
-            switchDistance=1.0*nanometer,constraints=HBonds)
+  use_plumed=True
+  outfreq = 0
+  chkpt_freq=0
+  save_chkpt_file=False
+  
+  print(f'We are at {os.getcwd()}')
+  
+  #fixing PDBs to avoid missing residue or terminal issues
+  fix_pdb(index);
+  pdb_fixed=f'fixed_{index}.pdb'
+  
+  #Get the structure and assign force field
+  pdb = PDBFile(pdb_fixed) 
+  forcefield = ForceField('amber03.xml', 'tip3p.xml')
+  
+  # Placing in a box and adding hydrogens, ions and water
+  modeller = Modeller(pdb.topology, pdb.positions)
+  modeller.addHydrogens(forcefield)
+  modeller.addSolvent(forcefield, padding=0.5*nanometers, model='tip3p', neutralize=True, positiveIon='Na+', negativeIon='Cl-')
 
-    #integrator = LangevinMiddleIntegrator(300*kelvin, 1/picosecond, 0.004*picoseconds)
-    #using NoseHooverIntegrator - Leapfrog integration
-    integrator = NoseHooverIntegrator(temp*kelvin, freq/picosecond,
-                                    dt*picoseconds);
-    if use_plumed:
-      fid=open(plumed_file,'r')
-      ff=fid.read()
-      force=PlumedForce(ff)
-      system.addForce(force)
-
+  #Create simulation system and assign integrator
+  system = forcefield.createSystem(modeller.topology,nonbondedCutoff=1.2*nanometer,
+        switchDistance=1.0*nanometer,constraints=HBonds)
+  integrator = NoseHooverIntegrator(temp*kelvin, freq/picoseconds,
+                                dt*picoseconds);
+  if use_plumed:
+    fid=open(plumedfile,'r')
+    ff=fid.read()
+    force=PlumedForce(ff)
+    system.addForce(force)
     if on_gpu:
       platform = Platform.getPlatformByName('CUDA')
       properties = {'Precision': 'double','CudaCompiler':'/usr/local/cuda/bin/nvcc'}
-      simulation = Simulation(top.topology, system, integrator, platform)
+      simulation = Simulation(modeller.topology, system, integrator, platform)
     else:
-      simulation = Simulation(top.topology, system, integrator, platform)
-
-    simulation.context.setPositions(gro.positions)
-
-    #simulation.minimizeEnergy()
-    #simulation.reporters.append(PDBReporter('output.pdb', 1000))
-
-    simulation.reporters.append(DCDReporter(outfname, outfreq))
-    #simulation.reporters.append(StateDataReporter(stdout, outfreq, step=True,potentialEnergy=True, temperature=True))
-
+      platform = Platform.getPlatformByName('CPU')
+      simulation = Simulation(modeller.topology, system, integrator, platform)
+    
+    simulation.context.setPositions(modeller.positions)
+    simulation.minimizeEnergy()
+    
     if save_chkpt_file:
       simulation.reporters.append(CheckpointReporter(chkpt_fname, chkpt_freq))
-
-    #starts the MD simulation
+    
     simulation.step(nstep)
-
-    #timing the simulation
-    t2 = time.perf_counter()
-    print('\ntime taken to run:',(t2-t1)/60,' mins')
+    positions = simulation.context.getState(getPositions=True).getPositions()
+    PDBFile.writeFile(simulation.topology, positions, open(f'unb_{index}.pdb', 'w'))
 
 def make_biased_plumed(plumedfile,weights,colvar,height,biasfactor,width1,width2,gridmin1,gridmin2,gridmax1,gridmax2):
     f=open(plumedfile,"a")
@@ -113,9 +145,6 @@ def run_biased(on_gpu,plumed_file,dt,temp,freq,nstep):
     outfreq = 0
     chkpt_freq=0
     
-    t1 = time.perf_counter()
-
-    os.chdir("/content/test_MD/")
     gro = GromacsGroFile('pred_%i.gro'%index)
     top = GromacsTopFile('topol.top', \
                          periodicBoxVectors=gro.getPeriodicBoxVectors(), \
@@ -154,10 +183,7 @@ def run_biased(on_gpu,plumed_file,dt,temp,freq,nstep):
     #starts the MD simulation
     simulation.step(nstep)
 
-    #timing the simulation
-    t2 = time.perf_counter()
-    print('\ntime taken to run:',(t2-t1)/60,' mins')
-
+    
 #Functions for CSP demo only
 
 def triginvert(x,sinx,cosx):
