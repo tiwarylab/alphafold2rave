@@ -48,7 +48,7 @@ def run_unbiased(on_gpu,plumedfile,dt,temp,freq,nstep,index):
     gro = GromacsGroFile('pred_%i.gro'%index)
     top = GromacsTopFile('topol.top', \
                          periodicBoxVectors=gro.getPeriodicBoxVectors(), \
-                         includeDir='/content/Plumed-on-OpenMM-GPU/gromacsff') \
+                         includeDir='/content/Plumed-on-OpenMM-GPU/gromacsff')
     system = top.createSystem(nonbondedMethod=PME, nonbondedCutoff=1.2*nanometer, \
             switchDistance=1.0*nanometer,constraints=HBonds)
 
@@ -101,7 +101,7 @@ def make_biased_plumed(plumedfile,weights,colvar,height,biasfactor,width1,width2
       SIGMA=%f,%f\n \
       FILE=HILLS GRID_MIN=-%f,-%f GRID_MAX=%f,%f GRID_BIN=200,200\n \
       CALC_RCT RCT_USTRIDE=1000\n \
-    ... METAD\n"%(height,biasfactor,width1,width2,gridmin1,gridmin2,gridmax1,gridmax2)) \
+      ... METAD\n"%(height,biasfactor,width1,width2,gridmin1,gridmin2,gridmax1,gridmax2))
 
 
     f.close()
@@ -116,10 +116,10 @@ def run_biased(on_gpu,plumed_file,dt,temp,freq,nstep)
 
     os.chdir("/content/test_MD/")
     gro = GromacsGroFile('pred_%i.gro'%index)
-    top = GromacsTopFile('topol.top', 
-                         periodicBoxVectors=gro.getPeriodicBoxVectors(),
+    top = GromacsTopFile('topol.top', \
+                         periodicBoxVectors=gro.getPeriodicBoxVectors(), \
                          includeDir='/content/Plumed-on-OpenMM-GPU/gromacsff')
-    system = top.createSystem(nonbondedMethod=PME, nonbondedCutoff=1.2*nanometer,
+    system = top.createSystem(nonbondedMethod=PME, nonbondedCutoff=1.2*nanometer, \
             switchDistance=1.0*nanometer,constraints=HBonds)
 
     #integrator = LangevinMiddleIntegrator(300*kelvin, 1/picosecond, 0.004*picoseconds)
@@ -127,9 +127,9 @@ def run_biased(on_gpu,plumed_file,dt,temp,freq,nstep)
     integrator = NoseHooverIntegrator(temp*kelvin, freq/picosecond,
                                     dt*picoseconds);
     if use_plumed:
-      fid=open(plumed_file,'r') \
-      ff=fid.read() \
-      force=PlumedForce(ff) \
+      fid=open(plumed_file,'r') 
+      ff=fid.read() 
+      force=PlumedForce(ff) 
       system.addForce(force)
 
     if on_gpu:
