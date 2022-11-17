@@ -126,12 +126,14 @@ def run_unbiased(on_gpu,plumedfile,dt,temp,freq,nstep,index):
     PDBFile.writeFile(simulation.topology, positions, open(f'unb_{index}.pdb', 'w'))
 
 def make_biased_plumed(plumedfile,weights,colvar,height,biasfactor,width1,width2,gridmin1,gridmin2,gridmax1,gridmax2):
-    f=open(plumedfile,"a")
+    f_unb=open(plumedfile)
+    f=open('plumbed_biased.dat','w')
+    lines=f_unb.readlines()
+    lines.insert(-3,f'dt =[{dt}]\n')
+    lines.insert(-3,"\n sigma1: COMBINE ARG=%s COEFFICIENTS=%s"%(colvar,weights[0]))
+    lines.insert(-3,"\n sigma2: COMBINE ARG=%s COEFFICIENTS=%s"%(colvar,weights[1]))
 
-    f.write("\n sigma1: COMBINE ARG=%s COEFFICIENTS=%s"%(colvar,weights[0]))
-    f.write("\n sigma2: COMBINE ARG=%s COEFFICIENTS=%s"%(colvar,weights[1]))
-
-    f.write("\nMETAD ...\n \
+    lines.insert(-3,"\nMETAD ...\n \
       LABEL=metad\n \
       ARG=sigma1,sigma2\n \
       PACE=1000 HEIGHT=%f TEMP=300\n \
@@ -140,9 +142,10 @@ def make_biased_plumed(plumedfile,weights,colvar,height,biasfactor,width1,width2
       FILE=HILLS GRID_MIN=-%f,-%f GRID_MAX=%f,%f GRID_BIN=200,200\n \
       CALC_RCT RCT_USTRIDE=1000\n \
       ... METAD\n"%(height,biasfactor,width1,width2,gridmin1,gridmin2,gridmax1,gridmax2))
-
-
+  
+    f.writelines(lines)
     f.close()
+    
     
 def run_biased(on_gpu,plumedfile,dt,temp,freq,nstep,index):
 
