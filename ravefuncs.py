@@ -6,12 +6,12 @@
 import numpy as np
 from sys import stdout
 from openmmplumed import PlumedForce
-from simtk.openmm.app import *
-from simtk.openmm import *
-from simtk.unit import *
-#from openmm.app import *
-#from openmm import *
-#from openmm.unit import *
+#from simtk.openmm.app import *
+#from simtk.openmm import *
+#from simtk.unit import *
+from openmm.app import *
+from openmm import *
+from openmm.unit import *
 
 import pdbfixer
 
