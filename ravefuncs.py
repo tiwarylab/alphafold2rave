@@ -141,7 +141,7 @@ def make_biased_plumed(plumedfile,weights,colvar,height,biasfactor,width1,width2
       PACE=1000 HEIGHT=%f TEMP=300\n \
       BIASFACTOR=%i\n \
       SIGMA=%f,%f\n \
-      FILE=HILLS GRID_MIN=-%f,-%f GRID_MAX=%f,%f GRID_BIN=200,200\n \
+      FILE=HILLS GRID_MIN=%f,%f GRID_MAX=%f,%f GRID_BIN=200,200\n \
       CALC_RCT RCT_USTRIDE=500\n \
       ... METAD\n"%(height,biasfactor,width1,width2,gridmin1,gridmin2,gridmax1,gridmax2))
   
