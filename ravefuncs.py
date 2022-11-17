@@ -9,6 +9,10 @@ from openmmplumed import PlumedForce
 from simtk.openmm.app import *
 from simtk.openmm import *
 from simtk.unit import *
+#from openmm.app import *
+#from openmm import *
+#from openmm.unit import *
+
 import pdbfixer
 
 def RegSpaceClustering(z, min_dist, max_centers=200, batch_size=100):
