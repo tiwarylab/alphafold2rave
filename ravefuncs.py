@@ -130,10 +130,10 @@ def make_biased_plumed(plumedfile,weights,colvar,height,biasfactor,width1,width2
     f=open('plumed_biased.dat','w')
     lines=f_unb.readlines()
     p=lines.pop(-2)
-    w0=",".join([string(weights[0][i]) for i in range (len(weights[0]))])
-    w1=",".join([string(weights[1][i]) for i in range (len(weights[1]))])
-    lines.insert(-1,"\n sigma1: COMBINE ARG=%s COEFFICIENTS=%s"%(colvar,w0))
-    lines.insert(-1,"\n sigma2: COMBINE ARG=%s COEFFICIENTS=%s"%(colvar,w1))
+    w0=",".join([str(weights[0][i]) for i in range (len(weights[0]))])
+    w1=",".join([str(weights[1][i]) for i in range (len(weights[1]))])
+    lines.insert(-1,"\nsigma1: COMBINE ARG=%s COEFFICIENTS=%s"%(colvar,w0))
+    lines.insert(-1,"\nsigma2: COMBINE ARG=%s COEFFICIENTS=%s"%(colvar,w1))
 
     lines.insert(-1,"\nMETAD ...\n \
       LABEL=metad\n \
