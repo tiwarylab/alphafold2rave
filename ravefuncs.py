@@ -146,7 +146,7 @@ def make_biased_plumed(plumedfile,weights,colvar,height,biasfactor,width1,width2
       ... METAD\n"%(height,biasfactor,width1,width2,gridmin1,gridmin2,gridmax1,gridmax2))
   
     f.writelines(lines)
-    f.write("\n PRINT ARG =%s,metad.rbias STRIDE=500 FILE=COLVAR_biased.dat"%colvar)
+    f.write("\n PRINT ARG=%s,metad.rbias STRIDE=500 FILE=COLVAR_biased.dat"%colvar)
 
     f.close()
     
