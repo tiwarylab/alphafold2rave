@@ -22,7 +22,7 @@ def RegSpaceClustering(z, min_dist, max_centers=200, batch_size=100):
     p = np.hstack((0,np.random.permutation(num_observations-1)+1))
     data = z[p]
     center_list = data[0, :].copy().reshape(d,1)
-    centerids=[p[0]]
+    centerids=[p[0]+1]
     i = 1
     while i < num_observations:
         x_active = data[i:i+batch_size, :]
