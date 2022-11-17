@@ -112,7 +112,8 @@ def run_unbiased(on_gpu,plumedfile,dt,temp,freq,nstep,index):
     
     simulation.context.setPositions(modeller.positions)
     simulation.minimizeEnergy()
-    PDBFile.writeFile(simulation.topology, positions, open(f'minim_{index}.pdb', 'w'))
+    minim_positions = simulation.context.getState(getPositions=True).getPositions()
+    PDBFile.writeFile(simulation.topology, minim_positions, open(f'minim_{index}.pdb', 'w'))
     if save_chkpt_file:
       simulation.reporters.append(CheckpointReporter(chkpt_fname, chkpt_freq))
     
