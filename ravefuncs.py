@@ -93,7 +93,7 @@ def run_unbiased(on_gpu,plumedfile,dt,temp,freq,nstep,index):
   modeller.addSolvent(forcefield, padding=0.5*nanometers, model='tip3p', neutralize=True, positiveIon='Na+', negativeIon='Cl-')
 
   #Create simulation system and assign integrator
-  system = forcefield.createSystem(modeller.topology,nonbondedCutoff=1.2*nanometer,
+  system = forcefield.createSystem(modeller.topology,nonbondedMethod=PME,nonbondedCutoff=1.2*nanometer,
         switchDistance=1.0*nanometer,constraints=HBonds)
   integrator = NoseHooverIntegrator(temp*kelvin, freq/picoseconds,
                                 dt*picoseconds);
@@ -112,7 +112,7 @@ def run_unbiased(on_gpu,plumedfile,dt,temp,freq,nstep,index):
     
     simulation.context.setPositions(modeller.positions)
     simulation.minimizeEnergy()
-    
+    PDBFile.writeFile(simulation.topology, positions, open(f'minim_{index}.pdb', 'w'))
     if save_chkpt_file:
       simulation.reporters.append(CheckpointReporter(chkpt_fname, chkpt_freq))
     
@@ -139,49 +139,37 @@ def make_biased_plumed(plumedfile,weights,colvar,height,biasfactor,width1,width2
 
     f.close()
     
-def run_biased(on_gpu,plumed_file,dt,temp,freq,nstep):
-  
-    use_plumed=True
-    outfreq = 0
-    chkpt_freq=0
-    
-    gro = GromacsGroFile('pred_%i.gro'%index)
-    top = GromacsTopFile('topol.top', \
-                         periodicBoxVectors=gro.getPeriodicBoxVectors(), \
-                         includeDir='/content/Plumed-on-OpenMM-GPU/gromacsff')
-    system = top.createSystem(nonbondedMethod=PME, nonbondedCutoff=1.2*nanometer, \
-            switchDistance=1.0*nanometer,constraints=HBonds)
+def run_biased(on_gpu,plumedfile,dt,temp,freq,nstep,index):
 
-    #integrator = LangevinMiddleIntegrator(300*kelvin, 1/picosecond, 0.004*picoseconds)
-    #using NoseHooverIntegrator - Leapfrog integration
-    integrator = NoseHooverIntegrator(temp*kelvin, freq/picosecond,
-                                    dt*picoseconds);
-    if use_plumed:
-      fid=open(plumed_file,'r') 
-      ff=fid.read() 
-      force=PlumedForce(ff) 
-      system.addForce(force)
+  use_plumed=True
+  outfreq = 0
+  chkpt_freq=0
+  save_chkpt_file=False
 
+  #Pdb from previous unbiased run
+  pdb = PDBFile(f'unb_{index}.pdb') 
+  forcefield = ForceField('amber03.xml', 'tip3p.xml')
+
+  system = forcefield.createSystem(pdb.topology,nonbondedMethod=PME,nonbondedCutoff=1.2*nanometer,
+      switchDistance=1.0*nanometer,constraints=HBonds)
+  integrator = NoseHooverIntegrator(temp*kelvin, freq/picoseconds,
+                              dt*picoseconds)
+  if use_plumed:
+    fid=open(plumedfile,'r')
+    ff=fid.read()
+    force=PlumedForce(ff)
+    system.addForce(force)
     if on_gpu:
       platform = Platform.getPlatformByName('CUDA')
       properties = {'Precision': 'double','CudaCompiler':'/usr/local/cuda/bin/nvcc'}
-      simulation = Simulation(top.topology, system, integrator, platform)
+      simulation = Simulation(pdb.topology, system, integrator, platform)
     else:
-      simulation = Simulation(top.topology, system, integrator, platform)
-
-    simulation.context.setPositions(gro.positions)
-
-    #simulation.minimizeEnergy()
-    #simulation.reporters.append(PDBReporter('output.pdb', 1000))
-
-    simulation.reporters.append(DCDReporter(outfname, outfreq))
-    #simulation.reporters.append(StateDataReporter(stdout, outfreq, step=True,potentialEnergy=True, temperature=True))
-
-    if save_chkpt_file:
-      simulation.reporters.append(CheckpointReporter(chkpt_fname, chkpt_freq))
-
-    #starts the MD simulation
-    simulation.step(nstep)
+      platform = Platform.getPlatformByName('CPU')
+      simulation = Simulation(pdb.topology, system, integrator, platform)
+  simulation.context.setPositions(pdb.positions)
+  simulation.step(nstep)
+  positions = simulation.context.getState(getPositions=True).getPositions()
+  PDBFile.writeFile(simulation.topology, positions, open(f'final_{index}.pdb', 'w'))
 
     
 #Functions for CSP demo only
