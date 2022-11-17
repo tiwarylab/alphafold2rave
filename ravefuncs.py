@@ -129,7 +129,6 @@ def make_biased_plumed(plumedfile,weights,colvar,height,biasfactor,width1,width2
     f_unb=open(plumedfile)
     f=open('plumbed_biased.dat','w')
     lines=f_unb.readlines()
-    lines.insert(-3,f'dt =[{dt}]\n')
     lines.insert(-3,"\n sigma1: COMBINE ARG=%s COEFFICIENTS=%s"%(colvar,weights[0]))
     lines.insert(-3,"\n sigma2: COMBINE ARG=%s COEFFICIENTS=%s"%(colvar,weights[1]))
 
