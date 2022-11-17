@@ -127,12 +127,14 @@ def run_unbiased(on_gpu,plumedfile,dt,temp,freq,nstep,index):
 
 def make_biased_plumed(plumedfile,weights,colvar,height,biasfactor,width1,width2,gridmin1,gridmin2,gridmax1,gridmax2):
     f_unb=open(plumedfile)
-    f=open('plumbed_biased.dat','w')
+    f=open('plumed_biased.dat','w')
     lines=f_unb.readlines()
-    lines.insert(-3,"\n sigma1: COMBINE ARG=%s COEFFICIENTS=%s"%(colvar,weights[0]))
-    lines.insert(-3,"\n sigma2: COMBINE ARG=%s COEFFICIENTS=%s"%(colvar,weights[1]))
+    p=lines.pop(-3)
 
-    lines.insert(-3,"\nMETAD ...\n \
+    lines.insert(-1,"\n sigma1: COMBINE ARG=%s COEFFICIENTS=%s"%(colvar,weights[0]))
+    lines.insert(-1,"\n sigma2: COMBINE ARG=%s COEFFICIENTS=%s"%(colvar,weights[1]))
+
+    lines.insert(-1,"\nMETAD ...\n \
       LABEL=metad\n \
       ARG=sigma1,sigma2\n \
       PACE=1000 HEIGHT=%f TEMP=300\n \
@@ -143,6 +145,8 @@ def make_biased_plumed(plumedfile,weights,colvar,height,biasfactor,width1,width2
       ... METAD\n"%(height,biasfactor,width1,width2,gridmin1,gridmin2,gridmax1,gridmax2))
   
     f.writelines(lines)
+    f.write("\n PRINT ARG =%s,rbias STRIDE=1000 FILE=COLVAR_biased.dat"%colvar)
+
     f.close()
     
     
