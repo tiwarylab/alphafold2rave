@@ -106,6 +106,7 @@ def run_unbiased(on_gpu,plumedfile,dt,temp,freq,nstep,index):
     ff=fid.read()
     force=PlumedForce(ff)
     system.addForce(force)
+    #system.addForce(MonteCarloBarostat(press*bar, temp*kelvin))   #Pressure control
     if on_gpu:
       platform = Platform.getPlatformByName('CUDA')
       properties = {'Precision': 'double','CudaCompiler':'/usr/local/cuda/bin/nvcc'}
@@ -116,13 +117,13 @@ def run_unbiased(on_gpu,plumedfile,dt,temp,freq,nstep,index):
     
     simulation.context.setPositions(modeller.positions)
     simulation.minimizeEnergy()
-    minim_positions = simulation.context.getState(getPositions=True).getPositions()
+    minim_positions = simulation.context.getState(getPositions=True,enforcePeriodicBox=True).getPositions()
     PDBFile.writeFile(simulation.topology, minim_positions, open(f'minim_{index}.pdb', 'w'))
     if save_chkpt_file:
       simulation.reporters.append(CheckpointReporter(chkpt_fname, chkpt_freq))
     
     simulation.step(nstep)
-    positions = simulation.context.getState(getPositions=True).getPositions()
+    positions = simulation.context.getState(getPositions=True,enforcePeriodicBox=True).getPositions()
     PDBFile.writeFile(simulation.topology, positions, open(f'unb_{index}.pdb', 'w'))
 
 def make_biased_plumed(plumedfile,weights,colvar,height,biasfactor,width1,width2,gridmin1,gridmin2,gridmax1,gridmax2):
@@ -171,6 +172,7 @@ def run_biased(on_gpu,plumedfile,dt,temp,freq,nstep,index):
     ff=fid.read()
     force=PlumedForce(ff)
     system.addForce(force)
+    #system.addForce(MonteCarloBarostat(press*bar, temp*kelvin)) #pressure control
     if on_gpu:
       platform = Platform.getPlatformByName('CUDA')
       properties = {'Precision': 'double','CudaCompiler':'/usr/local/cuda/bin/nvcc'}
@@ -180,7 +182,7 @@ def run_biased(on_gpu,plumedfile,dt,temp,freq,nstep,index):
       simulation = Simulation(pdb.topology, system, integrator, platform)
   simulation.context.setPositions(pdb.positions)
   simulation.step(nstep)
-  positions = simulation.context.getState(getPositions=True).getPositions()
+  positions = simulation.context.getState(getPositions=True,enforcePeriodicBox=True).getPositions()
   PDBFile.writeFile(simulation.topology, positions, open(f'final_{index}.pdb', 'w'))
 
     
