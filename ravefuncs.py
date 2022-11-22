@@ -6,12 +6,12 @@
 import numpy as np
 from sys import stdout
 from openmmplumed import PlumedForce
-#from simtk.openmm.app import *
-#from simtk.openmm import *
-#from simtk.unit import *
-from openmm.app import *
-from openmm import *
-from openmm.unit import *
+from simtk.openmm.app import *
+from simtk.openmm import *
+from simtk.unit import *
+#from openmm.app import *
+#from openmm import *
+#from openmm.unit import *
 
 import pdbfixer
 
@@ -152,12 +152,10 @@ def make_biased_plumed(plumedfile,weights,colvar,height,biasfactor,width1,width2
     f.close()
     
     
-def run_biased(on_gpu,plumedfile,dt,temp,freq,nstep,index):
-
+def run_biased(on_gpu,plumedfile,dt,temp,freq,nstep,index,save_chkpt_file=True,chkpt_freq=500000,restart=False,):
+  #Saves check point file after every 500000 steps (by default) 
   use_plumed=True
-  outfreq = 0
-  chkpt_freq=0
-  save_chkpt_file=False
+  outfreq = 5000
 
   #Pdb from previous unbiased run
   pdb = PDBFile(f'unb_{index}.pdb') 
@@ -181,6 +179,11 @@ def run_biased(on_gpu,plumedfile,dt,temp,freq,nstep,index):
       platform = Platform.getPlatformByName('CPU')
       simulation = Simulation(pdb.topology, system, integrator, platform)
   simulation.context.setPositions(pdb.positions)
+  if restart:
+    simulation.loadCheckpoint('chkptfile.chk')
+  if save_chkpt_file:
+    simulation.reporters.append(CheckpointReporter('chkptfile.chk', chkpt_freq))
+  simulation.reporters.append(StateDataReporter(stdout, outfreq, step=True))
   simulation.step(nstep)
   positions = simulation.context.getState(getPositions=True,enforcePeriodicBox=True).getPositions()
   PDBFile.writeFile(simulation.topology, positions, open(f'final_{index}.pdb', 'w'))
