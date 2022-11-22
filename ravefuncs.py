@@ -75,8 +75,9 @@ def run_unbiased(on_gpu,plumedfile,dt,temp,freq,nstep,index):
   forcefields : amber03 and tip3p
   output : fixed_{index}.pdb, unb_{index}.pdb, COLVAR_unb
   """
-
-  use_plumed=True
+  if plumedfile != "None"
+    use_plumed=True
+  
   outfreq = 0
   chkpt_freq=0
   save_chkpt_file=False
@@ -152,7 +153,7 @@ def make_biased_plumed(plumedfile,weights,colvar,height,biasfactor,width1,width2
     f.close()
     
     
-def run_biased(on_gpu,plumedfile,dt,temp,freq,nstep,index,save_chkpt_file=True,chkpt_freq=500000,restart=False,):
+def run_biased(on_gpu,plumedfile,dt,temp,freq,nstep,index,save_chkpt_file=True,chkpt_freq=500000,restart=False):
   #Saves check point file after every 500000 steps (by default) 
   use_plumed=True
   outfreq = 5000
