@@ -75,7 +75,7 @@ def run_unbiased(on_gpu,plumedfile,dt,temp,freq,nstep,index):
   forcefields : amber03 and tip3p
   output : fixed_{index}.pdb, unb_{index}.pdb, COLVAR_unb
   """
-  if plumedfile != "None"
+  if plumedfile != "None":
     use_plumed=True
   
   outfreq = 0
