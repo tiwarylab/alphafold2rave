@@ -127,7 +127,7 @@ def run_unbiased(on_gpu,plumedfile,dt,temp,freq,nstep,index):
     positions = simulation.context.getState(getPositions=True,enforcePeriodicBox=True).getPositions()
     PDBFile.writeFile(simulation.topology, positions, open(f'unb_{index}.pdb', 'w'))
 
-def make_biased_plumed(plumedfile,weights,colvar,height,biasfactor,width1,width2,gridmin1,gridmin2,gridmax1,gridmax2):
+def make_biased_plumed(plumedfile,weights,colvar,height,biasfactor,width1,width2,gridmin1,gridmin2,gridmax1,gridmax2,temperature):
     f_unb=open(plumedfile)
     f=open('plumed_biased.dat','w')
     lines=f_unb.readlines()
@@ -140,12 +140,12 @@ def make_biased_plumed(plumedfile,weights,colvar,height,biasfactor,width1,width2
     lines.insert(-1,"\nMETAD ...\n \
       LABEL=metad\n \
       ARG=sigma1,sigma2\n \
-      PACE=1000 HEIGHT=%f TEMP=400\n \
+      PACE=1000 HEIGHT=%f TEMP=%i\n \
       BIASFACTOR=%i\n \
       SIGMA=%f,%f\n \
       FILE=HILLS GRID_MIN=%f,%f GRID_MAX=%f,%f GRID_BIN=200,200\n \
       CALC_RCT RCT_USTRIDE=500\n \
-      ... METAD\n"%(height,biasfactor,width1,width2,gridmin1,gridmin2,gridmax1,gridmax2))
+      ... METAD\n"%(height,temperature,biasfactor,width1,width2,gridmin1,gridmin2,gridmax1,gridmax2))
   
     f.writelines(lines)
     f.write("\n PRINT ARG=%s,sigma1,sigma2,metad.rbias STRIDE=500 FILE=COLVAR_biased.dat"%colvar)
