@@ -23,7 +23,7 @@ def RegSpaceClustering(z, min_dist, max_centers=200, batch_size=100,randomseed=0
         max_centers: the maximum number of cluster centers to be determined, integer greater than 0 required
         min_dist: the minimal distances between cluster centers
     '''
-    random.seed(randomseed)
+    np.random.seed(randomseed)
     num_observations, d = z.shape
     p = np.hstack((0,np.random.permutation(num_observations-1)+1))
     data = z[p]
