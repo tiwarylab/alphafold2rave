@@ -9,7 +9,6 @@ from openmmplumed import PlumedForce
 from simtk.openmm.app import *
 from simtk.openmm import *
 from simtk.unit import *
-import random
 #from openmm.app import *
 #from openmm import *
 #from openmm.unit import *
@@ -23,9 +22,8 @@ def RegSpaceClustering(z, min_dist, max_centers=200, batch_size=100,randomseed=0
         max_centers: the maximum number of cluster centers to be determined, integer greater than 0 required
         min_dist: the minimal distances between cluster centers
     '''
-    np.random.seed(randomseed)
     num_observations, d = z.shape
-    p = np.hstack((0,np.random.permutation(num_observations-1)+1))
+    p = np.hstack((0,np.random.RandomState(seed=randomseed).permutation(num_observations-1)+1))
     data = z[p]
     center_list = data[0, :].copy().reshape(d,1)
     centerids=[p[0]+1]
