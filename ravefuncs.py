@@ -9,19 +9,21 @@ from openmmplumed import PlumedForce
 from simtk.openmm.app import *
 from simtk.openmm import *
 from simtk.unit import *
+import random
 #from openmm.app import *
 #from openmm import *
 #from openmm.unit import *
 
 import pdbfixer
 
-def RegSpaceClustering(z, min_dist, max_centers=200, batch_size=100):
+def RegSpaceClustering(z, min_dist, max_centers=200, batch_size=100,randomseed=0):
     '''Regular space clustering.
     Args:
         data: ndarray containing (n,d)-shaped float data
         max_centers: the maximum number of cluster centers to be determined, integer greater than 0 required
         min_dist: the minimal distances between cluster centers
     '''
+    random.seed(randomseed)
     num_observations, d = z.shape
     p = np.hstack((0,np.random.permutation(num_observations-1)+1))
     data = z[p]
