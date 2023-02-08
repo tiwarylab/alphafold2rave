@@ -22,8 +22,8 @@ This protocol is essentially a methodology that combines two schools of thought:
 
 ravefuncs.py - functions required to run this instance of our methodology
 sample_config.ini - basic input configurations required for SPIB
-heavydemo.ipynb - our full protocol demonstrated to run on the colab GPU server to show improvement in sampling in a short time frame compared to unbiased simulation. This may take 2-4h to run.
+fullrunthrough_CSP.ipynb - our full protocol demonstrated to run on the colab GPU server to show improvement in sampling in a short time frame compared to unbiased simulation. This may take 2-4h to run.
 litedemo.ipynb - a tutorial of our protocol without running simulations, explaining how to build required code and files to adapt the methodology to your system and computational resources
-CSP_data - files required to run parts of heavydemo.ipynb and litedemo.ipynb on the benchmark system cold-shock protein 1HZB.
+CSP_data - files required to run parts of fullrunthrough_CSP.ipynb and litedemo.ipynb on the benchmark system cold-shock protein 1HZB.
 
-Please note that the hyperparameters used in heavydemo are chosen for efficiency, not robustness. Please refer to comments and litedemo for parameters chosen for robustness
+Please note that the hyperparameters used in fullrunthrough_CSP are chosen for efficiency, not robustness. Please refer to comments and litedemo for parameters chosen for robustness
