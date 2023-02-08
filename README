@@ -1,12 +1,14 @@
 AlphaFold2-RAVE v 1.0
 
+Demonstrative notebook can be found at: https://colab.research.google.com/github/tiwarylab/alphafold2rave/blob/main/fullrunthrough_CSP.ipynb?authuser=1
+
 Please cite the following reference if using this protocol with or without the provided code:
 
-AlphaFold2-RAVE: From sequence to Boltzmann ensemble
+"AlphaFold2-RAVE: From sequence to Boltzmann ensemble"
 Bodhi P. Vani, Akashnathan Aranganathan, Dedi Wang, Pratyush Tiwary
 bioRxiv 2022.05.25.493365; doi: https://doi.org/10.1101/2022.05.25.493365
 
-Dedi Wang and Pratyush Tiwary , "State predictive information bottleneck", J. Chem. Phys. 154, 134111 (2021) https://doi.org/10.1063/5.0038198
+"State predictive information bottleneck", Dedi Wang and Pratyush Tiwary, J. Chem. Phys. 154, 134111 (2021) https://doi.org/10.1063/5.0038198
 
 If the provided code is used for the protocol, please also cite:
 
