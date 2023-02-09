@@ -14,7 +14,7 @@ from simtk.unit import *
 #from openmm.unit import *
 
 import pdbfixer
-def RegSpaceClustering(z, min_dist, max_centers=200, batch_size=100,randomseed=0,periodicity=np.pi):
+def RegSpaceClustering(z, min_dist, max_centers=200, batch_size=100,randomseed=0,periodicity=0):
     '''Regular space clustering.
     Args:
         data: ndarray containing (n,d)-shaped float data
@@ -29,10 +29,8 @@ def RegSpaceClustering(z, min_dist, max_centers=200, batch_size=100,randomseed=0
     i = 1
     while i < num_observations:
         x_active = data[i:i+batch_size, :]
-        differences=np.abs(np.expand_dims(center_list.T,0) - np.expand_dims(x_active,1)))
-        differences.shape
-        differences=np.max(np.stack(differences,2*np.pi-differences),axis=1)
-        differences.shape
+        differences=np.abs(np.expand_dims(center_list.T,0) - np.expand_dims(x_active,1))
+        differences=np.max(np.stack(differences,2*np.pi-differences),axis=0)
         distances = np.sqrt((np.square(differences)).sum(axis=-1))
         indice = tuple(np.nonzero(np.all(distances > min_dist, axis=-1))[0])
         if len(indice) > 0:
