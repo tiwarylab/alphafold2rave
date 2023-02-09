@@ -6,7 +6,7 @@
 import numpy as np
 from sys import stdout
 
-def RegSpaceClustering(z, min_dist, max_centers=200, batch_size=100):
+def RegSpaceClustering(z, min_dist, max_centers=200, batch_size=100,randomseed=0,periodicity=np.pi):
     '''Regular space clustering.
     Args:
         data: ndarray containing (n,d)-shaped float data
@@ -14,14 +14,18 @@ def RegSpaceClustering(z, min_dist, max_centers=200, batch_size=100):
         min_dist: the minimal distances between cluster centers
     '''
     num_observations, d = z.shape
-    p = np.hstack((0,np.random.permutation(num_observations-1)+1))
+    p = np.hstack((0,np.random.RandomState(seed=randomseed).permutation(num_observations-1)+1))
     data = z[p]
     center_list = data[0, :].copy().reshape(d,1)
     centerids=[p[0]+1]
     i = 1
     while i < num_observations:
         x_active = data[i:i+batch_size, :]
-        distances = np.sqrt((np.square(np.expand_dims(center_list.T,0) - np.expand_dims(x_active,1))).sum(axis=-1))
+        differences=np.abs(np.expand_dims(center_list.T,0) - np.expand_dims(x_active,1)))
+        differences.shape
+        differences=np.max(np.stack(differences,2*np.pi-differences),axis=1)
+        differences.shape
+        distances = np.sqrt((np.square(differences)).sum(axis=-1))
         indice = tuple(np.nonzero(np.all(distances > min_dist, axis=-1))[0])
         if len(indice) > 0:
             # the first element will be used
