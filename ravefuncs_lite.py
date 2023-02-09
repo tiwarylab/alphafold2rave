@@ -21,7 +21,7 @@ def RegSpaceClustering(z, min_dist, max_centers=200, batch_size=100,randomseed=0
     i = 1
     while i < num_observations:
         x_active = data[i:i+batch_size, :]
-        differences=np.abs(np.expand_dims(center_list.T,0) - np.expand_dims(x_active,1))
+        differences=np.expand_dims(center_list.T,0) - np.expand_dims(x_active,1)
         #differences.shape
         #differences=np.max(np.stack(differences,2*np.pi-differences),axis=1)
         #differences.shape
