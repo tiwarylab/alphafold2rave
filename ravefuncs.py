@@ -14,9 +14,6 @@ from simtk.unit import *
 #from openmm.unit import *
 
 import pdbfixer
-        
-        
-    return diff
 def RegSpaceClustering(z, min_dist, max_centers=200, batch_size=100,randomseed=0,periodicity=np.pi):
     '''Regular space clustering.
     Args:
