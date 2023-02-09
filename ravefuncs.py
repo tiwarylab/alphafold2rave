@@ -140,7 +140,7 @@ def make_biased_plumed(plumedfile,weights,colvar,height,biasfactor,width1,width2
     lines.insert(-1,"\nMETAD ...\n \
       LABEL=metad\n \
       ARG=sigma1,sigma2\n \
-      PACE=1000 HEIGHT=%f TEMP=%i\n \
+      PACE=500 HEIGHT=%f TEMP=%i\n \
       BIASFACTOR=%i\n \
       SIGMA=%f,%f\n \
       FILE=HILLS GRID_MIN=%f,%f GRID_MAX=%f,%f GRID_BIN=200,200\n \
