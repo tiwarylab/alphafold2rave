@@ -1,6 +1,6 @@
 AlphaFold2-RAVE v 1.0
 
-Demonstrative notebook can be found here(https://colab.research.google.com/github/bodhivani/temprep/blob/main/fullrunthrough_CSP.ipynb)
+Demonstrative notebook can be found here[https://colab.research.google.com/github/bodhivani/temprep/blob/main/fullrunthrough_CSP.ipynb]
 
 Please cite the following reference if using this protocol with or without the provided code:
 
