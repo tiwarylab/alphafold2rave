@@ -3,7 +3,7 @@
 ## Demonstrative colab notebook can be found here -> [Complete run through on CSP system](https://colab.research.google.com/github/bodhivani/temprep/blob/main/fullrunthrough_CSP.ipynb)
 This notebook aims to show how efficient our method is in predicting an effective RC (SPIB) from the amino acid sequence of a protein of interest(CSP).
 
-We provide a *light_version* option in our notebook to get a brief overview and the essence of our protocol. 
+We provide a `light_version` option in our notebook to get a brief overview and the essence of our protocol. 
 
 | light_version  |   Time   | MD simulation  | SPIB |
 |----------------|:--------:|----------------|------|
