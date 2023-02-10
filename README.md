@@ -36,12 +36,14 @@ bioRxiv 2022.05.25.493365; doi: https://doi.org/10.1101/2022.05.25.493365
 
 If the provided code is used for the protocol, please also cite:
 
+* M. Mirdita, K. Schütze, Y. Moriwaki, L. Heo, S. Ovchinnikov, and M. Steinegger, “ColabFold: making protein folding accessible to all,” Nature Methods, vol. 19, no. 6. Springer Science and Business Media LLC, pp. 679–682, May 30, 2022. doi: 10.1038/s41592-022-01488-1.
 * P. Eastman et al., “OpenMM 7: Rapid development of high performance algorithms for molecular dynamics,” PLOS Computational Biology, vol. 13, no. 7. Public Library of Science (PLoS), p. e1005659, Jul. 26, 2017. doi: 10.1371/journal.pcbi.1005659.
 * “Promoting transparency and reproducibility in enhanced molecular simulations,” Nature Methods, vol. 16, no. 8. Springer Science and Business Media LLC, pp. 670–673, Jul. 30, 2019. doi: 10.1038/s41592-019-0506-8.
 * A. Barducci, G. Bussi, and M. Parrinello, “Well-Tempered Metadynamics: A Smoothly Converging and Tunable Free-Energy Method,” Physical Review Letters, vol. 100, no. 2. American Physical Society (APS), Jan. 18, 2008. doi: 10.1103/physrevlett.100.020603.
 
 
 Note: This will be updated on peer reviewed acceptance and parameters chosen for robustness
+Note: Toolset will be uploaded soon
 
 ## License
 
