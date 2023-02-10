@@ -42,6 +42,30 @@ def RegSpaceClustering(z, min_dist, max_centers=200, batch_size=100,randomseed=0
     print("Found %i centers!"%len(centerids))
     return center_list,centerids
 
+def make_biased_plumed(plumedfile,weights,colvar,height,biasfactor,width1,width2,gridmin1,gridmin2,gridmax1,gridmax2,temperature):
+    f_unb=open(plumedfile)
+    f=open('plumed_biased.dat','w')
+    lines=f_unb.readlines()
+    p=lines.pop(-2)
+    w0=",".join([str(weights[0][i]) for i in range (len(weights[0]))])
+    w1=",".join([str(weights[1][i]) for i in range (len(weights[1]))])
+    lines.insert(-1,"\nsigma1: COMBINE ARG=%s COEFFICIENTS=%s PERIODIC=NO"%(colvar,w0))
+    lines.insert(-1,"\nsigma2: COMBINE ARG=%s COEFFICIENTS=%s PERIODIC=NO"%(colvar,w1))
+
+    lines.insert(-1,"\nMETAD ...\n \
+      LABEL=metad\n \
+      ARG=sigma1,sigma2\n \
+      PACE=500 HEIGHT=%f TEMP=%i\n \
+      BIASFACTOR=%i\n \
+      SIGMA=%f,%f\n \
+      FILE=HILLS GRID_MIN=%f,%f GRID_MAX=%f,%f GRID_BIN=200,200\n \
+      CALC_RCT RCT_USTRIDE=500\n \
+      ... METAD\n"%(height,temperature,biasfactor,width1,width2,gridmin1,gridmin2,gridmax1,gridmax2))
+  
+    f.writelines(lines)
+    f.write("\n PRINT ARG=%s,sigma1,sigma2,metad.rbias STRIDE=500 FILE=COLVAR_biased.dat"%colvar)
+
+    f.close()
     
 #Functions for CSP demo only
 
