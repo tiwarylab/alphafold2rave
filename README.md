@@ -30,7 +30,7 @@ Please cite the following reference if using this protocol with or without the p
 
 * "AlphaFold2-RAVE: From sequence to Boltzmann ensemble"
 Bodhi P. Vani, Akashnathan Aranganathan, Dedi Wang, Pratyush Tiwary
-bioRxiv 2022.05.25.493365; doi: https://doi.org/10.1101/2022.05.25.493365
+J. Chem. Theory Comput. 2023; doi: https://doi.org/10.1021/acs.jctc.3c00290
 
 * "State predictive information bottleneck", Dedi Wang and Pratyush Tiwary, J. Chem. Phys. 154, 134111 (2021) https://doi.org/10.1063/5.0038198
 
