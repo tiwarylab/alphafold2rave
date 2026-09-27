@@ -29,6 +29,8 @@ This protocol is essentially a methodology that combines two schools of thought:
 
 ## Citation
 
+Optional companion: [Read online](https://webeditions.page/works/highly-accurate-protein-structure-prediction-with-alphafold/?via=placement:5d0a9cbc087d8231e88d) — free HTML for Jumper et al. AlphaFold2 Nature paper (source PDF unchanged).
+
 Please cite the following reference if using this protocol with or without the provided code:
 
 * "AlphaFold2-RAVE: From sequence to Boltzmann ensemble"
